@@ -1,5 +1,9 @@
+from typing import Any
+from django.db.models.query import QuerySet
 from django.shortcuts import render
 from django.views import generic
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+
 from .models import Book, BookInstance, Author, Genre
 
 
@@ -42,7 +46,7 @@ class BookListView(generic.ListView):
     paginate_by = 2
 
 
-class BookDetailView(generic.DetailView):
+class BookDetailView(LoginRequiredMixin, generic.DetailView):
     model = Book
     template_name = "catalog/book_detail.html"
 
@@ -54,7 +58,7 @@ class AuthorListView(generic.ListView):
     paginate_by = 2
 
 
-class AuthorDetailView(generic.DetailView):
+class AuthorDetailView(LoginRequiredMixin, generic.DetailView):
     model = Author
     template_name = "catalog/author_detail.html"
 
@@ -65,3 +69,29 @@ class AuthorDetailView(generic.DetailView):
             book__author=author
         ).count()
         return context
+
+
+class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
+    """Generic class-based view listing books on loan to current user."""
+
+    model = BookInstance
+    template_name = "catalog/bookinstance_list_borrowed_user.html"
+    paginate_by = 10
+
+    def get_queryset(self):
+        return (
+            BookInstance.objects.filter(borrower=self.request.user)
+            .filter(status__exact="o")
+            .order_by("due_back")
+        )
+
+
+class LoanedBooksListView(PermissionRequiredMixin, generic.ListView):
+    permission_required = ("catalog.can_mark_returned",)
+
+    model = BookInstance
+    template_name = "catalog/bookinstance_borrowed_list.html"
+    paginate_by = 10
+
+    def get_queryset(self):
+        return BookInstance.objects.filter(status__exact="o").order_by("due_back")
