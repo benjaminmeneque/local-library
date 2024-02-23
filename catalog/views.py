@@ -1,15 +1,15 @@
-from django.contrib.auth.decorators import login_required, permission_required
 import datetime
-from django.urls import reverse, reverse_lazy
+
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse, reverse_lazy
 from django.views import generic
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-
-from catalog.models import Book, BookInstance, Author, Genre
-from catalog.forms import RenewBookForm, AuthorForm
+from catalog.forms import AuthorForm, RenewBookForm
+from catalog.models import Author, Book, BookInstance, Genre
 
 
 # Create your views here.

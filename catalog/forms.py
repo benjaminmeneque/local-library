@@ -1,8 +1,8 @@
 import datetime
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-
 
 from catalog.models import Author
 
@@ -18,10 +18,15 @@ class RenewBookForm(forms.Form):
 
         # Check if a date is not in the past.
         if data < datetime.date.today():
-            raise ValidationError(_("Invalid date - renewal in past"))
+            raise ValidationError(
+                _("Invalid date - renewal in past"), code="invalid renewal date"
+            )
         # Check if a date is in the allowed range (+4 weeks from today).
         if data > datetime.date.today() + datetime.timedelta(weeks=4):
-            raise ValidationError(_("Invalid date - renewal more than 4 weeks ahead"))
+            raise ValidationError(
+                _("Invalid date - renewal more than 4 weeks ahead"),
+                code="invalid date range",
+            )
 
         return data
 
@@ -34,3 +39,20 @@ class AuthorForm(forms.ModelForm):
             "date_of_birth": forms.DateInput(attrs={"type": "date"}),
             "date_of_death": forms.DateInput(attrs={"type": "date"}),
         }
+
+    def clean(self):
+        clean_date_of_death = self.cleaned_data["date_of_death"]
+        clean_date_of_birth = self.cleaned_data["date_of_birth"]
+
+        if clean_date_of_death < clean_date_of_birth:
+            raise ValidationError(
+                {
+                    "date_of_death": ValidationError(
+                        _(
+                            "Invalid date of death - the date of death is earlier than the date of birth. "
+                        ),
+                        code="invalid date of death",
+                    )
+                }
+            )
+        return clean_date_of_death
