@@ -21,4 +21,18 @@ urlpatterns = [
     path("book/create/", views.BookCreate.as_view(), name="book-create"),
     path("book/<int:pk>/update/", views.BookUpdate.as_view(), name="book-update"),
     path("book/<int:pk>/delete/", views.BookDelete.as_view(), name="book-delete"),
+    # signup
+    path("signup/", views.SignUpView.as_view(), name="signup"),
+    # language
+    path(
+        "language/create/", views.LanguageCreateView.as_view(), name="language-create"
+    ),
+    # genre
+    path("genre/create/", views.GenreCreateView.as_view(), name="genre-create"),
+    # bookinstance
+    path(
+        "bookinstance/create/",
+        views.BookInstanceCreate.as_view(),
+        name="book_instance-create",
+    ),
 ]

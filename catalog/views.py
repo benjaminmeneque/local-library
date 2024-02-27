@@ -1,6 +1,7 @@
 import datetime
 
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -8,8 +9,8 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from catalog.forms import AuthorForm, RenewBookForm
-from catalog.models import Author, Book, BookInstance, Genre
+from catalog.forms import AuthorForm, BookInstanceForm, RenewBookForm
+from catalog.models import Author, Book, BookInstance, Genre, Language
 
 
 # Create your views here.
@@ -42,6 +43,26 @@ def index(request):
 
     # Render the HTML template index.html with the data in the context variable
     return render(request, "catalog/index.html", context=context)
+
+
+class SignUpView(CreateView):
+    form_class = UserCreationForm
+    success_url = reverse_lazy("login")
+    template_name = "registration/signup.html"
+
+
+class LanguageCreateView(PermissionRequiredMixin, CreateView):
+    model = Language
+    fields = ["name"]
+    permission_required = "catalog.add_language"
+    success_url = reverse_lazy("language-create")
+
+
+class GenreCreateView(PermissionRequiredMixin, CreateView):
+    model = Genre
+    fields = ["name"]
+    permission_required = "catalog.add_genre"
+    success_url = reverse_lazy("genre-create")
 
 
 class BookListView(generic.ListView):
@@ -178,3 +199,9 @@ class BookDelete(PermissionRequiredMixin, DeleteView):
     model = Book
     success_url = reverse_lazy("books")
     permission_required = "catalog.delete_book"
+
+
+class BookInstanceCreate(PermissionRequiredMixin, CreateView):
+    model = BookInstance
+    form_class = BookInstanceForm
+    permission_required = "catalog.add_bookinstance"

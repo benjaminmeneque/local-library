@@ -4,7 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from catalog.models import Author
+from catalog.models import Author, BookInstance
 
 
 class RenewBookForm(forms.Form):
@@ -40,19 +40,25 @@ class AuthorForm(forms.ModelForm):
             "date_of_death": forms.DateInput(attrs={"type": "date"}),
         }
 
-    def clean(self):
-        clean_date_of_death = self.cleaned_data["date_of_death"]
-        clean_date_of_birth = self.cleaned_data["date_of_birth"]
+    def clean_date_of_death(self):
+        clean_date_of_death = self.cleaned_data.get("date_of_death")
+        clean_date_of_birth = self.cleaned_data.get("date_of_birth")
 
-        if clean_date_of_death < clean_date_of_birth:
-            raise ValidationError(
-                {
-                    "date_of_death": ValidationError(
-                        _(
-                            "Invalid date of death - the date of death is earlier than the date of birth. "
-                        ),
-                        code="invalid date of death",
+        if clean_date_of_death and clean_date_of_birth:
+            if clean_date_of_death < clean_date_of_birth:
+                raise ValidationError(
+                    _(
+                        "Invalid date of death - the date of death is earlier than the date of birth."
                     )
-                }
-            )
+                )
+
         return clean_date_of_death
+
+
+class BookInstanceForm(forms.ModelForm):
+    class Meta:
+        model = BookInstance
+        fields = ["book", "imprint", "due_back", "borrower", "status"]
+        widgets = {
+            "due_back": forms.DateInput(attrs={"type": "date"}),
+        }
