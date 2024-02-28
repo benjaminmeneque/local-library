@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Available Books</h2>
+<ul>
+    {% for book_instance in available_books %}
+    <li>{{ book_instance.book }}</li>
+    {% endfor %}
+</ul>
+<!-- Pagination links -->
+<div class="pagination">
+    <span class="step-links">
+        {% if available_books.has_previous %}
+        <a href="?page=1">&laquo; first</a>
+        <a href="?page={{ available_books.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ available_books.number }} of {{ available_books.paginator.num_pages }}.
+        </span>
+
+        {% if available_books.has_next %}
+        <a href="?page={{ available_books.next_page_number }}">next</a>
+        <a href="?page={{ available_books.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}

@@ -62,3 +62,23 @@ class BookInstanceForm(forms.ModelForm):
         widgets = {
             "due_back": forms.DateInput(attrs={"type": "date"}),
         }
+
+
+class BookInstanceUpdateForm(forms.ModelForm):
+    class Meta:
+        model = BookInstance
+        fields = ["due_back", "borrower", "status"]
+        widgets = {
+            "due_back": forms.DateInput(attrs={"type": "date"}),
+        }
+
+    def clean_due_back(self):
+        clean_due_back = self.cleaned_data.get("due_back")
+
+        if clean_due_back:
+            if clean_due_back > datetime.date.today() + datetime.timedelta(weeks=4):
+                raise ValidationError(
+                    _("Invalid date - due back more than 4 weeks ahead")
+                )
+
+        return clean_due_back

@@ -1,15 +1,22 @@
 import datetime
+from multiprocessing import context
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from catalog.forms import AuthorForm, BookInstanceForm, RenewBookForm
+from catalog.forms import (
+    AuthorForm,
+    BookInstanceForm,
+    BookInstanceUpdateForm,
+    RenewBookForm,
+)
 from catalog.models import Author, Book, BookInstance, Genre, Language
 
 
@@ -43,6 +50,29 @@ def index(request):
 
     # Render the HTML template index.html with the data in the context variable
     return render(request, "catalog/index.html", context=context)
+
+
+def available_book(request):
+    instances_available = BookInstance.objects.filter(status__exact="a")
+
+    # Number of items per page
+    items_per_page = 10  # You can change this value as per your requirement
+
+    paginator = Paginator(instances_available, items_per_page)
+    page_number = request.GET.get("page")
+
+    try:
+        instances_available = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        instances_available = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        instances_available = paginator.page(paginator.num_pages)
+
+    context = {"available_books": instances_available}
+
+    return render(request, "catalog/available_book.html", context=context)
 
 
 class SignUpView(CreateView):
@@ -205,3 +235,11 @@ class BookInstanceCreate(PermissionRequiredMixin, CreateView):
     model = BookInstance
     form_class = BookInstanceForm
     permission_required = "catalog.add_bookinstance"
+    success_url = reverse_lazy("book_instance-create")
+
+
+class BookInstanceUpdate(PermissionRequiredMixin, UpdateView):
+    model = BookInstance
+    form_class = BookInstanceUpdateForm
+    permission_required = "catalog.change_bookinstance"
+    success_url = reverse_lazy("all-borrowed")

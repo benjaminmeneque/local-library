@@ -35,4 +35,11 @@ urlpatterns = [
         views.BookInstanceCreate.as_view(),
         name="book_instance-create",
     ),
+    path(
+        "bookinstance/<uuid:pk>/update/",
+        views.BookInstanceUpdate.as_view(),
+        name="book_instance-update",
+    ),
+    # available books
+    path("availablebooks/", views.available_book, name="available-books"),
 ]
