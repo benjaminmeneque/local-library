@@ -118,6 +118,7 @@ class BookInstance(models.Model):
         permissions = (
             ("can_mark_returned", "Set book as returned"),
             ("can_renew", "Set renewed book"),
+            ("can_view_bookinstance_api", "Can view bookinstance api"),
         )
 
     def __str__(self):
