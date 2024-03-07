@@ -48,6 +48,13 @@ class Book(models.Model):
 
     title = models.CharField(max_length=200)
     author = models.ForeignKey("Author", on_delete=models.RESTRICT, null=True)
+    cover = models.ImageField(
+        "Book Cover",
+        upload_to="images/",
+        blank=True,
+        null=True,
+        help_text="Submit a cover of the book",
+    )
     # Foreign Key used because book can only have one author, but authors can have multiple books.
     # Author as a string rather than object because it hasn't been declared yet in file.
 
