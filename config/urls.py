@@ -22,12 +22,12 @@ from django.urls import include, path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
+    path("admin/doc/", include("django.contrib.admindocs.urls")),
     path("admin/", admin.site.urls),
     # catalog url
-    path("catalog/", include("catalog.urls")),
-    # drf url
+    path("", include("catalog.urls")),
+    # drf url (enable this to see the apis)
     # path("api/v1/", include("api.urls")),
-    path("api-auth/", include("rest_framework.urls")),
     # accounts url
     path("accounts/", include("django.contrib.auth.urls")),
     # simplejwt urls

@@ -37,8 +37,13 @@ urlpatterns = [
     ),
     path(
         "bookinstance/<uuid:pk>/update/",
-        views.BookInstanceUpdate.as_view(),
-        name="book_instance-update",
+        views.BookInstance_for_user.as_view(),
+        name="book_instance_update_for_user",
+    ),
+    path(
+        "bookinstance/<uuid:pk>/staff/",
+        views.BookInstance_for_staff.as_view(),
+        name="book_instance_update_for_staff",
     ),
     # available books
     path("availablebooks/", views.available_book, name="available-books"),

@@ -17,6 +17,7 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
     permission_classes = [IsAdminUser]
     throttle_scope = "basic"
+    filterset_fields = ["genre"]
 
 
 class BookInstanceViewSet(viewsets.ModelViewSet):

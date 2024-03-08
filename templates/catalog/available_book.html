@@ -4,24 +4,45 @@
 <h2>Available Books</h2>
 <ul>
     {% for book_instance in available_books %}
-    <li>{{ book_instance.book }}</li>
+    <li>{{ book_instance.book }} ({{ book_instance.imprint }})  </li>
+    {% if not user.is_staff %}
+    <a href="{% url 'book_instance_update_for_user' book_instance.id %}">book now</a>
+    {% else %}
+    <a href="{% url 'book_instance_update_for_staff' book_instance.id %}">book now/edit</a>
+    {% endif %}
     {% endfor %}
 </ul>
+{% if perms.catalog.change_bookinstance %}
+<h2>Reserve Books</h2>
+<ul>
+    {% for book_instance in reserve_books %}
+    <li>{{ book_instance.book }} ({{ book_instance.imprint }}) </li>
+    <a href="{% url 'book_instance_update_for_staff' book_instance.id %}">edit</a>
+    {% endfor %}
+</ul>
+<h2>Maintenance Books</h2>
+<ul>
+    {% for book_instance in maintenance_books %}
+    <li>{{ book_instance.book }} ({{ book_instance.imprint }})  </li>
+    <a href="{% url 'book_instance_update_for_staff' book_instance.id %}">edit</a>
+    {% endfor %}
+</ul>
+{% endif %}
 <!-- Pagination links -->
 <div class="pagination">
     <span class="step-links">
-        {% if available_books.has_previous %}
+        {% if instances_paginated.has_previous %}
         <a href="?page=1">&laquo; first</a>
-        <a href="?page={{ available_books.previous_page_number }}">previous</a>
+        <a href="?page={{ instances_paginated.previous_page_number }}">previous</a>
         {% endif %}
 
         <span class="current">
-            Page {{ available_books.number }} of {{ available_books.paginator.num_pages }}.
+            Page {{ instances_paginated.number }} of {{ instances_paginated.paginator.num_pages }}.
         </span>
 
-        {% if available_books.has_next %}
-        <a href="?page={{ available_books.next_page_number }}">next</a>
-        <a href="?page={{ available_books.paginator.num_pages }}">last &raquo;</a>
+        {% if instances_paginated.has_next %}
+        <a href="?page={{ instances_paginated.next_page_number }}">next</a>
+        <a href="?page={{ instances_paginated.paginator.num_pages }}">last &raquo;</a>
         {% endif %}
     </span>
 </div>
