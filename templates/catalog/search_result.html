@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<h1>Search Results</h1>
+
+<ul>
+  {% for book in book_list %}
+    <li>
+      <a href="{{ book.get_absolute_url }}">{{ book.title }} - ({{ book.author }})</a>
+    </li>
+    {% empty %}
+    <h4>Sorry, no results.</h4>
+  {% endfor %}
+</ul>
+{% endblock content %}
+    

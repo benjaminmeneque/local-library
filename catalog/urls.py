@@ -47,4 +47,6 @@ urlpatterns = [
     ),
     # available books
     path("availablebooks/", views.available_book, name="available-books"),
+    # search url
+    path("search/", views.SearchResultListView.as_view(), name="search-results"),
 ]

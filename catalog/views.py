@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
@@ -263,3 +264,17 @@ class BookInstance_for_staff(PermissionRequiredMixin, UpdateView):
     permission_required = "catalog.change_bookinstance"
     form_class = BookInstanceUpdateForm_for_staff
     success_url = reverse_lazy("available-books")
+
+
+class SearchResultListView(generic.ListView):
+    model = Book
+    template_name = "catalog/search_result.html"
+
+    def get_queryset(self):
+        query = self.request.GET.get("q")
+        if query:
+            return Book.objects.filter(
+                Q(title__icontains=query)
+                | Q(author__first_name__icontains=query)
+                | Q(author__last_name__icontains=query)
+            )

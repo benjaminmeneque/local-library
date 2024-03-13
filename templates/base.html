@@ -32,6 +32,10 @@
                     {% if not user.is_staff %}
                     <li><a href="{% url 'my-borrowed' %}">My Borrowed</a></li>
                     {% endif %}
+                    <form class="d-flex mt-3" action="{% url 'search-results' %}" method="get">
+                        <input class="form-control me-2" name="q" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
                     <br>
                     <form method="post" action="{% url 'logout' %}?next={{ request.path }}">
                         {% csrf_token %}

@@ -17,6 +17,7 @@ class BookSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data["language"] = instance.language.name
+        data["author"] = instance.author.first_name + " " + instance.author.last_name
         data["genre"] = [genre.name for genre in instance.genre.all()]
         return data
 
