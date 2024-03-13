@@ -1,5 +1,4 @@
 import datetime
-from multiprocessing import context
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import UserCreationForm
@@ -109,7 +108,7 @@ class BookListView(generic.ListView):
     model = Book
     context_object_name = "book_list"
     template_name = "catalog/book_list.html"
-    paginate_by = 2
+    paginate_by = 10
 
 
 class BookDetailView(LoginRequiredMixin, generic.DetailView):
@@ -121,7 +120,7 @@ class AuthorListView(generic.ListView):
     model = Author
     context_object_name = "author_list"
     template_name = "catalog/author_list.html"
-    paginate_by = 2
+    paginate_by = 10
 
 
 class AuthorDetailView(LoginRequiredMixin, generic.DetailView):
